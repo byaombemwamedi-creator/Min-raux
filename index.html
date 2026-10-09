@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="sw"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Madini · Minéraux</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0e1411"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
+<style>
+:root{--bg:#0e1411;--bg2:#16201b;--tx:#ece8dc;--mu:#9aa89f;--ac:#d4a94a;--em:#3fb583;--bd:#2a3a32;--sb:#0a0f0c}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f1ea;--bg2:#fff;--tx:#1b2620;--mu:#5d6b63;--ac:#9a6f10;--em:#1f8a5b;--bd:#d8d6cb;--sb:#e8e5da}}
+:root[data-theme="dark"]{--bg:#0e1411;--bg2:#16201b;--tx:#ece8dc;--mu:#9aa89f;--ac:#d4a94a;--em:#3fb583;--bd:#2a3a32;--sb:#0a0f0c}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 Georgia,'Times New Roman',serif;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3,button,input,select,textarea,nav{font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.g{position:absolute;width:var(--s);height:var(--s);background:linear-gradient(135deg,var(--ac),var(--em));opacity:.1;clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)}
+.gx{left:-15%;top:var(--y);animation:rx var(--d) linear infinite alternate}
+.gy{top:-15%;left:var(--x);animation:ry var(--d) linear infinite alternate}
+@keyframes rx{to{transform:translateX(115vw) rotate(180deg)}}
+@keyframes ry{to{transform:translateY(115vh) rotate(-180deg)}}
+@media (prefers-reduced-motion:reduce){.g{animation:none}}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--sb);border-bottom:1px solid var(--bd)}
+header h1{font-size:18px;margin:0;flex:1}
+button{cursor:pointer;border:1px solid var(--bd);background:var(--bg2);color:var(--tx);border-radius:8px;padding:8px 12px;font-size:14px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ac)}
+.pr{background:var(--ac);color:#111;border-color:var(--ac);font-weight:600}
+#side{position:fixed;z-index:10;top:0;bottom:0;left:0;width:260px;max-width:82%;background:var(--sb);border-right:1px solid var(--bd);transform:translateX(-100%);transition:transform .25s;padding:calc(16px + env(safe-area-inset-top,0px)) 12px 16px;display:flex;flex-direction:column;gap:4px}
+#side.o{transform:none}
+#side button{text-align:left;border:0;background:none;padding:12px;font-size:15px}
+#side button.a{background:var(--bg2);color:var(--ac)}
+#sh{position:fixed;inset:0;z-index:9;background:#0008;display:none}#sh.o{display:block}
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h2{margin:6px 0 12px;font-size:22px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.card img{width:100%;max-height:260px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+.tag{display:inline-block;font:12px system-ui;padding:2px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mu);margin:2px 4px 2px 0}
+.tag.s{color:var(--em);border-color:var(--em)}.tag.x{color:#e07a5f;border-color:#e07a5f}
+.mu{color:var(--mu);font-size:14px}
+label{display:block;margin:10px 0 4px;font:600 13px system-ui;color:var(--mu)}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.bar{display:flex;gap:8px;margin-bottom:12px}
+.cm{border-top:1px solid var(--bd);margin-top:8px;padding-top:6px;font-size:14px}
+.empty{text-align:center;color:var(--mu);padding:30px 10px}
+.ad-card{background:linear-gradient(135deg,rgba(212,169,74,0.08),rgba(63,181,131,0.08));border:1px dashed var(--ac);text-align:center;padding:12px;font-size:13px;color:var(--mu)}
+#st{position:fixed;z-index:20;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ac);color:#111;padding:8px 14px;border-radius:99px;font:600 14px system-ui;display:none}
+</style></head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<div id="sh"></div>
+<nav id="side" aria-label="Menu"></nav>
+<header><button id="mb" aria-label="Menu">☰</button><h1 id="ttl">Madini</h1><span id="net" class="tag"></span><button id="au" aria-label="Login">🔑</button><button id="lg">FR</button></header>
+<main id="m"></main>
+<div id="st" role="status"></div>
+<script>
+const T={
+ sw:{
+  tools:"Tambua",idl:"Umefikia kikomo cha utambuzi 10 kwa siku. Jaribu kesho.",lgn:"Ingia",sgn:"Fungua akaunti",lgo:"Toka",eml:"Barua pepe",pwd:"Nenosiri (angalau 6)",
+  lgm:"Ingia kwanza ili kuweka posti, kupenda au kutoa maoni. (Usajili ni wa barua pepe na nenosiri tu; namba ya simu inahitaji huduma ya SMS ya kulipia).",
+  cfm:"Angalia barua pepe yako kuthibitisha akaunti, kisha ingia.",
+  ro:"Unaweza kusoma tu; huna ruhusa ya kuandika kwenye hifadhidata ya pamoja.",big:"Picha ni kubwa sana; imeachwa.",
+  idt:"Tambua minerai kwa picha",idb:"Tambua sasa",idn:"Chagua au piga picha kwanza.",
+  idx:"Imeshindikana kutambua. Hakikisha una mtandao na umeingia.",
+  wa:"WhatsApp",shr:"Shiriki",today:"Minerai ya siku",allst:"Hali zote",copied:"Kiungo kimenakiliwa",
+  g1:"Jinsi ya kutambua minerai nyumbani",
+  g2:["Rangi ya unga: sugua kwenye kigae kisichong'aa; rangi ya mstari ni ya kweli.","Ugumu: kucha 2.5, sarafu 3.5, kisu/kioo 5.5, tupa ya chuma 6.5, quartz 7.","Mng'ao: wa chuma, kioo, au bila mng'ao.","Uzito: je, ni mzito kuliko jiwe la kawaida (cassiterite, coltan, galena)?","Sumaku: magnetite hushikwa.","Asidi: calcite hutoa povu kwenye siki kali.","Usilambe wala kunusa minerai; baadhi zina sumu au mionzi."],
+  g3:"Bado hujui? Weka posti ukichagua 'Sijui jina' ili wengine wasaidie.",
+  app:"Madini",feed:"Minerai zote",post:"Weka minerai",learn:"Jifunze",fav:"Vipendwa",mine:"Zangu",about:"Kuhusu",online:"Mtandaoni",offline:"Nje ya mtandao (Posti zitasubiri kutumwa mtandao ukirudi)",
+  name:"Jina la minerai (acha tupu kama hujui)",unk:"Sijui jina — nisaidieni kutambua",photo:"Picha",seller:"Jina la muuzaji / mchimbaji",
+  legal:"Leseni / ruhusa ya nchi husika",verified:"Beji ya leseni iliyokaguliwa (Inakuja hivi karibuni)",country:"Nchi",city:"Mji",village:"Kijiji / eneo",price:"Bei (hiari)",phone:"Simu / WhatsApp",desc:"Maelezo",status:"Hali",st1:"Inauzwa",st2:"Imeuzwa",st3:"Tayari imeuzwa, haijulikani ni minerai gani",st4:"Bado haijulikani",send:"Weka sasa",none:"Hakuna posti bado. Weka ya kwanza.",com:"Toa maoni",cmp:"Andika maoni…",like:"Penda",search:"Tafuta…",all:"Zote",saved:"Imehifadhiwa",ident:"Anayeweza kutambua minerai hii, toa maoni.",form:"Uundaji",where:"Inapatikana",use:"Matumizi",warn:"Kwa kuheshimu sheria za nchi, posti huonyesha leseni halali. Wanunuzi wanaweza kuchuja posti zenye leseni.",lic:"Zenye leseni tu",del:"Futa",intro:"Soko na kituo cha elimu ya madini kwa Kiswahili na Kifaransa. Posti zinahifadhiwa kwenye kifaa chako na zina mfumo wa kusubiri mtandao ukirudi.",rep:"Ripoti",flag:"Imeripotiwa",exp:"Hamisha data",lst:"Kuna minerai 12 hapa kama mfano; orodha kamili ya 100+ inaongezwa kwenye data.",adtxt:"📢 Tangazo: Nafasi ya kutangaza biashara au huduma zako hapa."
+ },
+ fr:{
+  tools:"Identifier",idl:"Limite de 10 identifications par jour atteinte. Réessayez demain.",lgn:"Connexion",sgn:"Créer un compte",lgo:"Déconnexion",eml:"E-mail",pwd:"Mot de passe (6 min.)",
+  lgm:"Connectez-vous pour publier, aimer ou commenter. (Inscription par e-mail/mot de passe uniquement ; SMS payant requis pour le téléphone).",
+  cfm:"Vérifiez votre e-mail pour confirmer le compte, puis connectez-vous.",
+  ro:"Lecture seule : vous ne pouvez pas écrire dans la base partagée.",big:"Photo trop lourde ; ignorée.",
+  idt:"Identifier un minéral par photo",idb:"Identifier",idn:"Choisissez ou prenez d'abord une photo.",
+  idx:"Échec de l'identification. Vérifiez le réseau et la connexion.",
+  wa:"WhatsApp",shr:"Partager",today:"Minéral du jour",allst:"Tous statuts",copied:"Lien copié",
+  g1:"Identifier un minéral chez soi",
+  g2:["Trait: frottez sur une plaque non émaillée; la couleur du trait est fiable.","Dureté: ongle 2,5, pièce 3,5, couteau/verre 5,5, lime 6,5, quartz 7.","Éclat: métallique, vitreux ou mat.","Densité: plus lourd qu'une pierre ordinaire (cassitérite, coltan, galène).","Aimant: la magnétite est attirée.","Acide: la calcite pétille au vinaigre fort.","Ne goûtez ni ne sentez les minéraux; certains sont toxiques ou radioactifs."],
+  g3:"Toujours inconnu ? Publiez en choisissant 'Je ne sais pas' pour que d'autres aident.",
+  app:"Minéraux",feed:"Tous les minéraux",post:"Publier",learn:"Apprendre",fav:"Favoris",mine:"Mes posts",about:"À propos",online:"En ligne",offline:"Hors ligne (Les posts seront envoyés au retour du réseau)",
+  name:"Nom du minéral (vide si inconnu)",unk:"Je ne sais pas — aidez-moi à l'identifier",photo:"Photo",seller:"Nom du vendeur / mineur",
+  legal:"Licence / autorisation du pays",verified:"Badge de licence vérifié (Bientôt disponible)",country:"Pays",city:"Ville",village:"Village / zone",price:"Prix (facultatif)",phone:"Tél / WhatsApp",desc:"Description",status:"Statut",st1:"À vendre",st2:"Vendu",st3:"Déjà vendu, minéral inconnu",st4:"Encore inconnu",send:"Publier",none:"Aucun post. Publiez le premier.",com:"Commenter",cmp:"Écrire un commentaire…",like:"J'aime",search:"Rechercher…",all:"Tous",saved:"Enregistré",ident:"Si vous savez identifier ce minéral, commentez.",form:"Formation",where:"Gisements",use:"Usages",warn:"Pour respecter les lois du pays, chaque post affiche une licence valide. Les acheteurs peuvent filtrer les posts avec licence.",lic:"Avec licence seulement",del:"Supprimer",intro:"Marché et centre d'apprentissage des minéraux en swahili et en français. Les posts sont gardés sur votre appareil et s'envoient automatiquement au retour du réseau.",rep:"Signaler",flag:"Signalé",exp:"Exporter les données",lst:"12 minéraux en exemple ici ; la liste complète de 100+ s'ajoute aux données.",adtxt:"📢 Annonce : Espace publicitaire disponible pour vos services."
+ }
+};
+const MIN=[
+["Quartz","SiO₂","Magma / hydrothermal","Brésil, Madagascar, Tanzanie","Électronique, verre, bijoux","Mwamba mgumu, wazi au wenye rangi; ugumu 7."],
+["Améthyste","SiO₂ + Fe","Géodes volcaniques","Zambie, Brésil, Tanzanie","Gemme, bijoux","Quartz ya zambarau."],
+["Calcite","CaCO₃","Sédimentaire","Mondial","Ciment, chaux, agriculture","Hutoa povu na asidi; ugumu 3."],
+["Fluorite","CaF₂","Hydrothermal","Chine, Mexique, Namibie","Acier, aluminium, optique","Rangi nyingi; ugumu 4."],
+["Malachite","Cu₂CO₃(OH)₂","Altération du cuivre","RDC, Zambie, Namibie","Minerai de cuivre, pigment","Kijani chenye mistari; ishara ya shaba."],
+["Tourmaline","Borosilicate","Pegmatites","Tanzanie, Nigeria, Brésil","Gemme","Rangi nyingi; huvuta vumbi ikipashwa moto."],
+["Béryl / Émeraude","Be₃Al₂Si₆O₁₈","Pegmatites","Zambie, Colombie, Madagascar","Gemme, béryllium","Zumaridi ni beryl ya kijani."],
+["Grenat","Silicates","Métamorphique","Tanzanie, Kenya, Inde","Gemme, abrasif","Rangi nyekundu hasa; ugumu 6.5–7.5."],
+["Tanzanite","Zoïsite","Métamorphique","Tanzanie (Merelani)","Gemme","Hupatikana Tanzania pekee; samawati-zambarau."],
+["Coltan","(Fe,Mn)(Nb,Ta)₂O₆","Pegmatites","RDC, Rwanda","Téléphones, condensateurs","Mzito, mweusi; chanzo cha tantalum."],
+["Cassitérite","SnO₂","Granites / alluvions","RDC, Rwanda, Indonésie","Étain, soudure","Mzito sana, kahawia-nyeusi; chanzo cha bati."],
+["Or natif","Au","Filons de quartz / alluvions","Tanzanie, Ghana, RDC","Bijoux, finance, électronique","Dhahabu: nzito, laini, haiharibiki."]];
+const X=`Pyrite|FeS₂|Pérou, Espagne|Soufre, acide|Dhahabu ya wajinga
+Hématite|Fe₂O₃|Brésil, Australie|Fer|Chuma nyekundu
+Magnétite|Fe₃O₄|Afrique du Sud, Suède|Fer|Hushikwa na sumaku
+Goethite|FeO(OH)|Mondial|Fer, pigment|
+Chalcopyrite|CuFeS₂|Chili, RDC|Cuivre|
+Bornite|Cu₅FeS₄|Pérou, Zambie|Cuivre|
+Chalcocite|Cu₂S|RDC, Chili|Cuivre|
+Cuprite|Cu₂O|RDC, Namibie|Cuivre|
+Azurite|Cu₃(CO₃)₂(OH)₂|Namibie, Maroc|Cuivre, pigment|Samawati nzito
+Chrysocolle|(Cu,Al)₂H₂Si₂O₅(OH)₄|RDC, Chili|Cuivre|
+Dioptase|CuSiO₃·H₂O|RDC, Namibie|Collection|Kijani cha zumaridi
+Cuivre natif|Cu|USA, RDC|Cuivre|
+Hétérogénite|CoO(OH)|RDC|Cobalt, batteries|
+Cobaltite|CoAsS|RDC, Maroc|Cobalt|
+Pentlandite|(Fe,Ni)₉S₈|Canada, Russie|Nickel|
+Garniérite|silicate de nickel|Nouvelle-Calédonie|Nickel|
+Galène|PbS|Namibie, Chine|Plomb|Mzito, kijivu
+Cérusite|PbCO₃|Namibie|Plomb|
+Anglésite|PbSO₄|Namibie|Plomb|
+Sphalérite|ZnS|Pérou, Chine|Zinc|
+Smithsonite|ZnCO₃|Namibie|Zinc|
+Cinabre|HgS|Espagne, Chine|Mercure|Sumu
+Argentite|Ag₂S|Mexique|Argent|
+Argent natif|Ag|Mexique, Pérou|Bijoux, électronique|
+Platine|Pt|Afrique du Sud, Russie|Catalyseurs|
+Bauxite|Al(OH)₃ + oxydes|Guinée, Australie|Aluminium|
+Chromite|FeCr₂O₄|Afrique du Sud, Zimbabwe|Chrome|
+Pyrolusite|MnO₂|Afrique du Sud, Gabon|Manganèse, piles|
+Rhodochrosite|MnCO₃|Argentine|Manganèse, gemme|
+Ilménite|FeTiO₃|Mozambique, Kenya|Titane|
+Rutile|TiO₂|Sierra Leone, Kenya|Titane|
+Wolframite|(Fe,Mn)WO₄|Rwanda, RDC, Chine|Tungstène|
+Scheelite|CaWO₄|Rwanda, Chine|Tungstène|
+Molybdénite|MoS₂|Chili, USA|Molybdène|
+Wulfénite|PbMoO₄|Namibie|Molybdène|
+Vanadinite|Pb₅(VO₄)₃Cl|Maroc, Namibie|Vanadium|
+Uraninite|UO₂|RDC, Namibie, Kazakhstan|Uranium|Mionzi hatari
+Monazite|(Ce,La)PO₄|Madagascar, Inde|Terres rares|
+Bastnäsite|(Ce,La)CO₃F|Chine, USA|Terres rares|
+Tantalite|(Fe,Mn)Ta₂O₆|RDC, Rwanda|Tantale|
+Columbite|(Fe,Mn)Nb₂O₆|RDC, Nigeria|Niobium|
+Pyrochlore|(Na,Ca)₂Nb₂O₆(OH,F)|Brésil|Niobium|
+Spodumène|LiAlSi₂O₆|Zimbabwe, Australie|Lithium, batteries|
+Lépidolite|K(Li,Al)₃(Si,Al)₄O₁₀(F,OH)₂|Zimbabwe, Brésil|Lithium|
+Pétalite|LiAlSi₄O₁₀|Zimbabwe, Namibie|Lithium|
+Stibine|Sb₂S₃|Chine|Antimoine|
+Réalgar|AsS|Chine|Arsenic|Sumu
+Orpiment|As₂S₃|Chine|Arsenic|Sumu
+Soufre|S|Indonésie, Italie|Acide sulfurique|
+Aigue-marine|Be₃Al₂Si₆O₁₈|Madagascar, Nigeria|Gemme|
+Morganite|Be₃Al₂Si₆O₁₈|Madagascar, Brésil|Gemme|
+Topaze|Al₂SiO₄(F,OH)₂|Brésil, Namibie|Gemme|
+Corindon|Al₂O₃|Madagascar, Tanzanie|Abrasif|
+Rubis|Al₂O₃ + Cr|Tanzanie, Mozambique|Gemme|
+Saphir|Al₂O₃|Madagascar, Tanzanie|Gemme|
+Diamant|C|Botswana, RDC, Afrique du Sud|Gemme, industrie|Ugumu 10
+Graphite|C|Tanzanie, Mozambique|Batteries, crayons|
+Spinelle|MgAl₂O₄|Tanzanie, Myanmar|Gemme|
+Péridot|(Mg,Fe)₂SiO₄|Pakistan, USA|Gemme|
+Olivine|(Mg,Fe)₂SiO₄|Mondial|Fonderie|
+Zircon|ZrSiO₄|Australie, Mozambique|Céramique|
+Tsavorite|Ca₃Al₂Si₃O₁₂ + V|Tanzanie, Kenya|Gemme|Grenat ya kijani
+Kunzite|LiAlSi₂O₆|Afghanistan, Madagascar|Gemme|
+Iolite|Mg₂Al₄Si₅O₁₈|Inde, Tanzanie|Gemme|
+Opale|SiO₂·nH₂O|Australie, Éthiopie|Gemme|
+Agate|SiO₂|Brésil, Namibie|Bijoux|
+Jaspe|SiO₂|Mondial|Ornement|
+Calcédoine|SiO₂|Mondial|Ornement|
+Citrine|SiO₂|Brésil, Zambie|Gemme|
+Quartz rose|SiO₂|Madagascar, Brésil|Gemme|
+Quartz fumé|SiO₂|Tanzanie, Brésil|Gemme|
+Œil de tigre|SiO₂|Afrique du Sud|Bijoux|
+Jadéite|NaAlSi₂O₆|Myanmar|Sculpture|
+Néphrite|Ca₂(Mg,Fe)₅Si₈O₂₂(OH)₂|Chine, Canada|Sculpture|
+Lapis-lazuli|(Na,Ca)₈(AlSiO₄)₆(S,SO₄)|Afghanistan|Pigment, bijoux|
+Turquoise|CuAl₆(PO₄)₄(OH)₈·4H₂O|Iran, USA|Bijoux|
+Sodalite|Na₈Al₆Si₆O₂₄Cl₂|Brésil, Namibie|Ornement|
+Rhodonite|MnSiO₃|Russie, Australie|Ornement|
+Prehnite|Ca₂Al₂Si₃O₁₀(OH)₂|Mali, Namibie|Gemme|
+Feldspath|KAlSi₃O₈|Mondial|Céramique, verre|
+Albite|NaAlSi₃O₈|Mondial|Céramique|
+Pierre de lune|KAlSi₃O₈|Sri Lanka, Madagascar|Gemme|
+Muscovite|KAl₂(AlSi₃O₁₀)(OH)₂|Inde, Madagascar|Isolant|
+Biotite|K(Mg,Fe)₃AlSi₃O₁₀(OH)₂|Mondial|Géologie|
+Talc|Mg₃Si₄O₁₀(OH)₂|Chine, Inde|Cosmétique, papier|Laini zaidi, ugumu 1
+Gypse|CaSO₄·2H₂O|Mondial|Plâtre|Ugumu 2
+Anhydrite|CaSO₄|Mondial|Ciment|
+Halite|NaCl|Mondial|Sel|
+Sylvite|KCl|Canada, Russie|Engrais|
+Baryte|BaSO₄|Maroc, Chine|Forage pétrolier|Nzito
+Célestine|SrSO₄|Mexique, Espagne|Strontium|
+Dolomite|CaMg(CO₃)₂|Mondial|Construction|
+Magnésite|MgCO₃|Chine, Brésil|Magnésium|
+Sidérite|FeCO₃|Mondial|Fer|
+Aragonite|CaCO₃|Maroc, Espagne|Collection|
+Apatite|Ca₅(PO₄)₃(F,Cl,OH)|Maroc, Tanzanie|Engrais|
+Kaolinite|Al₂Si₂O₅(OH)₄|Chine, USA|Porcelaine|
+Bentonite|argile|USA, Grèce|Forage|
+Serpentine|Mg₃Si₂O₅(OH)₄|Mondial|Ornement|
+Amiante|silicates fibreux|Mondial|Interdit (cancer)|Hatari
+Disthène|Al₂SiO₅|Brésil, Inde|Réfractaire|
+Épidote|Ca₂Al₂Fe(SiO₄)₃(OH)|Mondial|Collection|`.split('\n').map(l=>{const a=l.split('|');return[a[0],a[1],'',a[2],a[3],a[4]||'']});MIN.push(...X);
+const COL={'Or natif':'#d4a94a','Argent natif':'#c0c6cc','Cuivre natif':'#c27a47',Platine:'#cfd3d9',Diamant:'#bfe9f5',Rubis:'#d02b45',Saphir:'#2f5fd0','Béryl / Émeraude':'#2fae6b',Grenat:'#a8212f',Tanzanite:'#5a58c8',Citrine:'#e3a92b',Topaze:'#e9a85b',Turquoise:'#2fb7b0','Lapis-lazuli':'#27419c',Opale:'#d9e4f2',Soufre:'#e6d93a',Cinabre:'#c8362c',Malachite:'#1fa36a',Azurite:'#2c55b8',Fluorite:'#7bd0a8',Calcite:'#f1ead2',Quartz:'#cfd8dc','Quartz rose':'#f0a8bd','Quartz fumé':'#7a6a5c',Améthyste:'#9c5fd0',Tourmaline:'#e0508a',Péridot:'#9cc43a','Aigue-marine':'#7fd3e6',Morganite:'#f2b8a8',Hématite:'#7a2f2a',Pyrite:'#c9a93c',Galène:'#8a929b',Graphite:'#4a4f56',Jaspe:'#b5482f',Cassitérite:'#6a5240',Coltan:'#3a3a42',Tsavorite:'#2fa84f',Kunzite:'#e6a6d6',Iolite:'#4a54a8',Magnétite:'#4a4d55',Chalcopyrite:'#bfa23a',Dioptase:'#12a888',Chrysocolle:'#3ab5a5',Baryte:'#e9e2cf',Gypse:'#f0ece0',Halite:'#eaf0f5'};
+function gem(n){let c=COL[n];if(!c){let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))%360;c=`hsl(${h} 50% 52%)`}
+ return `<svg viewBox="0 0 100 80" width="76" height="61" aria-hidden="true" style="float:right;margin:0 0 6px 10px;color:${c}"><g stroke="#fff" stroke-opacity=".45" stroke-width="1.2" fill="currentColor"><polygon points="30,10 50,32 8,32" fill-opacity=".55"/><polygon points="30,10 70,10 50,32" fill-opacity=".95"/><polygon points="70,10 92,32 50,32" fill-opacity=".7"/><polygon points="8,32 50,32 50,74" fill-opacity=".8"/><polygon points="50,32 92,32 50,74" fill-opacity=".55"/></g></svg>`}
+async function small(f){try{const b=await createImageBitmap(f),k=Math.min(1,1024/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=b.width*k;c.height=b.height*k;c.getContext('2d').drawImage(b,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,'image/jpeg',.8))}catch(e){return f}}
+async function ident(){const f=$('#ip').files[0],o=$('#io');if(!f){o.textContent=t('idn');return}
+ if(!S){V='login';render();return}
+ o.textContent='…';
+ try{const bl=await small(f),b64=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(String(x.result).split(',')[1]);x.readAsDataURL(bl)});
+ const go=()=>fetch(SBU+'/functions/v1/identify',{method:'POST',headers:{apikey:SBK,Authorization:'Bearer '+S.access_token,'Content-Type':'application/json'},body:JSON.stringify({image:b64,mime:'image/jpeg',lang:L})});
+ let r=await go();if(r.status==401){await refresh();if(!S){V='login';render();return}r=await go()}
+ const j=await r.json();o.textContent=r.ok?j.text:(j.error=='limit'?t('idl'):t('idx'))}catch(e){o.textContent=t('idx')}}
+
+Object.assign(T.sw,{quiz:"Swali la siku",cab:"Kabati langu",lead:"Wataalamu",kind:"Unataka kufanya nini?",kask:"❓ Nauliza (nini hii?)",kshow:"🖼 Naonyesha",ksell:"🛒 Nauza",best:"Jibu bora",mname:"Jina la kuonyeshwa",place:"Mahali ulipopata",note:"Maelezo mafupi",add:"Ongeza",save:"Hifadhi",qask:"Fomula hii ni ya minerai gani?",qok:"Sahihi! Rudi kesho.",qno:"Jibu lilikuwa",leadn:"Pointi hupatikana jibu lako likichaguliwa kuwa bora na mwenye posti.",fwn:"posti mpya zinazolingana na unachofuatilia.",ok:"Sawa",scamT:"Tahadhari: sheria na utapeli",scamL:["Nunua tu kutoka kwa wauzaji wenye leseni halali ya nchi yao; omba nakala.","Usitume pesa mbele kwa mtu usiyemjua; tumia mtu wa kati au kutana mahali salama.","Bei nzuri kupita kiasi ni ishara ya utapeli (dhahabu, zumaridi bandia).","Omba picha na video za jiwe lenyewe; linganisha na ukurasa wa Tambua.","Baadhi ya madini (coltan, cassiterite, dhahabu) yana sheria kali za uuzaji nje; hakikisha uhalali.","Ripoti posti za mashaka kwa kitufe cha Ripoti."]});
+Object.assign(T.fr,{quiz:"Question du jour",cab:"Ma collection",lead:"Experts",kind:"Que voulez-vous faire ?",kask:"❓ Je demande (c'est quoi ?)",kshow:"🖼 Je montre",ksell:"🛒 Je vends",best:"Meilleure réponse",mname:"Nom affiché",place:"Lieu de trouvaille",note:"Note courte",add:"Ajouter",save:"Enregistrer",qask:"Quel minéral a cette formule ?",qok:"Correct ! Revenez demain.",qno:"La réponse était",leadn:"Les points viennent des réponses choisies comme meilleures par l'auteur du post.",fwn:"nouveaux posts correspondent à votre suivi.",ok:"OK",scamT:"Attention : lois et arnaques",scamL:["N'achetez qu'à des vendeurs avec une licence valide dans leur pays; demandez une copie.","N'envoyez pas d'argent d'avance à un inconnu; passez par un tiers ou un lieu sûr.","Un prix trop bas est un signe d'arnaque (or, émeraudes fausses).","Demandez photos et vidéos de la pierre; comparez avec la page Identifier.","Certains minéraux (coltan, cassitérite, or) ont des règles d'export strictes; vérifiez la légalité.","Signalez les posts suspects avec le bouton Signaler."]});
+
+Object.assign(T.sw,{groups:"Vikundi",admin:"Msimamizi",admh:"Posti zilizoripotiwa. Thibitisha leseni (✓) au futa.",vf:"Leseni imekaguliwa",vfb:"Leseni",grp:"Kikundi (hiari)",gjoin:"Jiunge",gleave:"Ondoka",gopen:"Fungua",gmem:"wanachama",mohs:"Kipimo cha ugumu cha Mohs (bofya namba)",mohsh:"Bofya namba 1–10 uone mfano."});
+Object.assign(T.fr,{groups:"Groupes",admin:"Admin",admh:"Posts signalés. Vérifiez la licence (✓) ou supprimez.",vf:"Licence vérifiée",vfb:"Licence",grp:"Groupe (facultatif)",gjoin:"Rejoindre",gleave:"Quitter",gopen:"Ouvrir",gmem:"membres",mohs:"Échelle de dureté de Mohs (touchez un chiffre)",mohsh:"Touchez 1–10 pour un exemple."});
+const $=s=>document.querySelector(s),m=$('#m');
+let SP=[],SH=true,CW=null,DB=null,S=sv('sess',null),UID=S&&S.user?S.user.id:'',FS=0,L=sv('lang','sw'),V='feed',P=sv('posts',[]),F=sv('favs',[]),Q='',LO=false,FM=[0,'']; 
+function sv(k,d){try{const v=localStorage.getItem('mad_'+k);return v?JSON.parse(v):d}catch(e){return d}}
+function ld(k,v){try{localStorage.setItem('mad_'+k,JSON.stringify(v));return true}catch(e){toast('⚠ Storage full');return false}}
+const t=k=>T[L][k]||k,esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(x){const e=$('#st');e.textContent=x;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
+(function(){let h='';for(let i=0;i<8;i++){const s=30+Math.random()*60,d=18+Math.random()*22;h+=`<i class="g ${i%2?'gx':'gy'}" style="--s:${s}px;--d:${d}s;--y:${Math.random()*90}%;--x:${Math.random()*90}%;animation-delay:-${Math.random()*d}s"></i>`}$('#bg').innerHTML=h})();
+function nav(){const it=[['feed','⛏'],['post','＋'],['learn','💎'],['fav','♥'],['mine','👤'],['quiz','🎯'],['cab','🗄'],['lead','🏆'],['groups','👥'],['tools','🔍'],['about','ℹ']];
+ if(ADM&&!it.some(x=>x[0]=='admin'))it.push(['admin','🛡']);
+ $('#side').innerHTML=it.map(([k,i])=>`<button data-v="${k}" class="${V==k?'a':''}">${i}  ${t(k)}</button>`).join('');
+ $('#ttl').textContent=t('app');$('#au').textContent=S?'⎋':'🔑';$('#lg').textContent=L=='sw'?'FR':'SW';
+ const on=navigator.onLine;$('#net').textContent=(on?t('online'):t('offline'))+' ☁';$('#net').className='tag '+(on?'s':'x');document.documentElement.lang=L}
+function side(o){$('#side').classList.toggle('o',o);$('#sh').classList.toggle('o',o)}
+$('#mb').onclick=()=>side(!$('#side').classList.contains('o'));$('#sh').onclick=()=>side(false);
+$('#side').onclick=e=>{const b=e.target.closest('button');if(b){V=b.dataset.v;PG=null;side(false);render();if(V=='cab')loadCab().then(render)}};
+$('#lg').onclick=()=>{L=L=='sw'?'fr':'sw';ld('lang',L);render()};
+$('#au').onclick=()=>{if(S){S=null;UID='';ld('sess',null);toast(t('lgo'))}else V='login';render()};
+
+// Background Sync / Offline Queue processing
+async function upImg(d){const bl=await(await fetch(d)).blob(),pa=UID+'/'+Date.now()+'.jpg';await api('/storage/v1/object/minerals/'+pa,{m:'POST',body:bl,h:{'Content-Type':'image/jpeg'}});return SBU+'/storage/v1/object/public/minerals/'+pa}
+async function syncOfflineQueue(){
+ if(!navigator.onLine||!S)return;
+ const q=sv('offline_queue',[]);if(!q.length)return;
+ toast('Inatuma posti zilizosubiri...');const rest=[];
+ for(const it of q){try{const pl=it.payload||it,pd=it.pending||(pl.img&&String(pl.img).startsWith('data:')?pl.img:'');
+  const b={...pl,img:pd?await upImg(pd):(pl.img&&!String(pl.img).startsWith('data:')?pl.img:null)};
+  await api('/rest/v1/posts',{m:'POST',json:b})}catch(e){rest.push(it)}}
+ ld('offline_queue',rest);await load();render()}
+addEventListener('online',()=>{nav();syncOfflineQueue();load()});
+addEventListener('offline',nav);
+
+const sOpt=(c)=>[1,2,3,4].map(i=>`<option value="${i}" ${c==i?'selected':''}>${t('st'+i)}</option>`).join('');
+function stTag(s){return `<span class="tag ${s==1?'s':s==2||s==3?'x':''}">${t('st'+s)}</span>`}
+function card(p){const fv=F.includes(p.id);
+ return `<article class="card" data-id="${p.id}">${p.img?`<img src="${p.img}" alt="">`:''}
+ <h3 style="margin:0">${esc(p.name)||'❓ '+t('unk')}</h3>
+ <div>${p.kind=='sell'?stTag(p.st):`<span class="tag">${t('k'+p.kind)}</span>`}${p.lic?`<span class="tag s">📄 ${esc(p.lic)}</span>`:''}${p.vf?`<span class="tag" style="border-color:var(--ac);color:var(--ac)">✓ ${t('vf')}</span>`:''}</div>
+ <p class="mu">📍 ${[p.vil,p.city,p.ctry].filter(Boolean).map(esc).join(', ')}${p.price?' · 💰 '+esc(p.price):''}<br>👤 ${esc(p.sel)}${p.tel?' · <a style="color:var(--ac)" href="tel:'+esc(p.tel)+'">'+esc(p.tel)+'</a>':''}</p>
+ ${p.d?`<p>${esc(p.d)}</p>`:''}${!p.name||p.st>=3?`<p class="mu">${t('ident')}</p>`:''}
+ <div class="row" style="gap:6px"><button data-a="lk">👍 ${p.lk||0} ${t('like')}</button><button data-a="fv">${fv?'♥':'♡'}</button><button data-a="rp">${p.fl?t('flag'):'⚑ '+t('rep')}</button>${p.tel?`<button data-a="wa">💬 ${t('wa')}</button>`:''}<button data-a="sh">↗ ${t('shr')}</button>${ADM?`<button data-a="vf">${p.vf?'✕':'✓'} ${t('vfb')}</button>${p.rc?`<span class="tag x">⚑ ${p.rc}</span>`:''}`:''}${p.own||ADM?`<button data-a="dl">🗑 ${t('del')}</button>`:''}</div>
+ ${(p.c||[]).map(c=>`<div class="cm">${c.best?'⭐':'💬'} <b>${esc(nm(c.uid))}</b>: ${esc(c.body)}${p.own&&!c.best&&c.uid!=UID?` <button data-a="bs" data-cid="${c.id}">⭐ ${t('best')}</button>`:''}</div>`).join('')}
+ <div class="bar cm"><input placeholder="${t('cmp')}" aria-label="${t('com')}"><button data-a="cm" style="flex:0 0 auto">${t('com')}</button></div></article>`}
+
+function adCard(){if(!AD.length)return '';const a=AD[ai++%AD.length],ok=/^https?:\/\//.test(a.link||'');return `<div class="card ad-card">📢 ${ok?`<a style="color:var(--ac)" href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.text)}</a>`:esc(a.text)}</div>`}
+
+function view(){
+ if(V=='post'&&!S)V='login';
+ if(V=='login')return `<h2>${t('lgn')}</h2><div class="card"><p class="mu">${t('lgm')}</p><label>${t('mname')}</label><input id="nm" autocomplete="nickname"><label>${t('eml')}</label><input id="em" type="email" autocomplete="email"><label>${t('pwd')}</label><input id="pw" type="password" autocomplete="current-password"><br><div class="row"><button class="pr" id="li">${t('lgn')}</button><button id="su">${t('sgn')}</button></div></div>`;
+ if(V=='feed'||V=='fav'||V=='mine'){let l=posts().filter(p=>V=='fav'?F.includes(p.id):V=='mine'?p.own:!p.gid);
+  if(LO)l=l.filter(p=>p.lic);if(FS)l=l.filter(p=>p.st==FS);if(Q)l=l.filter(p=>(p.name+p.sel+p.ctry+p.city+p.vil+p.d).toLowerCase().includes(Q.toLowerCase()));
+  const md=MIN[new Date().getDate()%MIN.length];
+  
+  let contentList = '';
+  l.forEach((p, idx)=>{
+   contentList += card(p);
+   if((idx + 1) % 4 === 0) contentList += adCard(); // Insert ad after every 4 posts
+  });
+
+  return `<h2>${t(V)}</h2>${V=='feed'?fwBox():''}${V=='feed'?`<div class="card">💎 <b>${t('today')}:</b>${md[0]} <span class="mu">${md[1]}</span><br><span class="mu">${md[4]}</span></div>`:''}<div class="bar"><input id="q" type="search" placeholder="${t('search')}" value="${esc(Q)}"><select id="fs" style="flex:0 0 auto;width:auto"><option value="0">${t('allst')}</option>${sOpt(FS)}</select><button id="lo" class="${LO?'pr':''}">${t('lic')}</button><button id="fw" aria-label="follow">🔔</button></div>`+(l.length?contentList:`<div class="empty">⛏<br>${t('none')}</div>`)}
+ if(V=='post')return `<h2>${t('post')}</h2><p class="mu">${t('warn')}</p><div class="card">
+ <label>${t('photo')}</label><input id="f_img" type="file" accept="image/*" capture="environment">
+ <label>${t('name')}</label><input id="f_name">
+ <label>${t('kind')}</label><select id="f_kind"><option value="ask">${t('kask')}</option><option value="show">${t('kshow')}</option><option value="sell">${t('ksell')}</option></select><div id="so" style="display:none"><label>${t('status')}</label><select id="f_st">${sOpt(1)}</select>
+ <label>${t('seller')} *</label><input id="f_sel">
+ <label>${t('legal')}</label><input id="f_lic">
+ <div class="row"><div><label>${t('country')} *</label><input id="f_ctry"></div><div><label>${t('city')}</label><input id="f_city"></div><div><label>${t('village')}</label><input id="f_vil"></div></div>
+ <div class="row"><div><label>${t('price')}</label><input id="f_price"></div><div><label>${t('phone')}</label><input id="f_tel" type="tel"></div></div></div>
+ <label>${t('grp')}</label><select id="f_grp"><option value="">—</option>${GR.filter(g=>GM.includes(g.id)).map(g=>`<option value="${g.id}" ${PG==g.id?'selected':''}>${esc(g.name)}</option>`).join('')}</select><label>${t('desc')}</label><textarea id="f_d" rows="3"></textarea><br><button class="pr" id="sub">${t('send')}</button></div>`;
+ if(V=='learn'){const q=Q.toLowerCase(),l=MIN.filter(x=>x.join(' ').toLowerCase().includes(q));
+  return `<h2>${t('learn')}</h2>${mohs()}<p class="mu">${MIN.length}</p><div class="bar"><input id="q" type="search" placeholder="${t('search')}" value="${esc(Q)}"></div>`+l.map(x=>`<div class="card">${gem(x[0])}<h3 style="margin:0">${x[0]} <span class="mu">${x[1]}</span></h3><p>${x[5]}</p><p class="mu">${x[2]?'<b>'+t('form')+':</b> '+x[2]+'<br>':''}<b>${t('where')}:</b> ${x[3]}<br><b>${t('use')}:</b> ${x[4]}</p></div>`).join('')}
+ if(V=='groups')return `<h2>👥 ${t('groups')}</h2>`+(GR.length?GR.map(g=>{const jn=GM.includes(g.id);return `<div class="card"><h3 style="margin:0">${esc(g.emoji||'👥')} ${esc(g.name)}</h3><p class="mu">${esc(g.descr)}<br>👥 ${g.group_members&&g.group_members[0]?g.group_members[0].count:0} ${t('gmem')}</p><div class="row"><button class="pr" data-go="${g.id}">${t('gopen')}</button><button data-g${jn?'l':'j'}="${g.id}">${jn?t('gleave'):t('gjoin')}</button></div></div>`}).join(''):`<div class="empty">👥</div>`);
+ if(V=='group'){const g=GR.find(x=>x.id==G);if(!g){V='groups';return view()}const l=posts().filter(p=>p.gid==G);return `<h2>${esc(g.emoji||'')} ${esc(g.name)}</h2><div class="bar"><button data-gb="1">←</button>${GM.includes(g.id)?`<button class="pr" data-gp="1">＋ ${t('post')}</button>`:`<button class="pr" data-gj="${g.id}">${t('gjoin')}</button>`}</div>`+(l.length?l.map(p=>card(p)).join(''):`<div class="empty">⛏<br>${t('none')}</div>`)}
+ if(V=='admin'){if(!ADM){V='feed';return view()}const l=posts().filter(p=>p.rc>0).sort((a,b)=>b.rc-a.rc);return `<h2>🛡 ${t('admin')}</h2><p class="mu">${t('admh')}</p>`+(l.length?l.map(p=>card(p)).join(''):`<div class="empty">✅</div>`)}
+ if(V=='quiz'){const q=qz(),dn=QZ.day==q.k;return `<h2>🎯 ${t('quiz')} <span class="tag s">🔥 ${ST.last>=q.k-1?ST.n:0}</span></h2><div class="card"><p>${t('qask')}</p><h3 style="margin:0 0 4px">${q.a[1]}</h3><p class="mu">${t('use')}: ${q.a[4]}</p>${q.o.map(x=>`<button data-qa="${esc(x[0])}" style="display:block;width:100%;margin:6px 0" ${dn?'disabled':''}>${esc(x[0])}</button>`).join('')}${dn?`<p>${QZ.ok?'✅ '+t('qok'):'❌ '+t('qno')+': <b>'+q.a[0]+'</b>'}</p>`:''}</div>`}
+ if(V=='lead')return `<h2>🏆 ${t('lead')}</h2><p class="mu">${t('leadn')}</p>`+(LB.filter(x=>x.pts>0).slice(0,20).map((x,i)=>`<div class="card">${i+1}. <b>${esc(x.name)}</b> ${bd(x.uid)} <span class="tag s">${x.pts} ⭐</span></div>`).join('')||`<div class="empty">🏆</div>`);
+ if(V=='cab'){if(!S){V='login';return view()}return `<h2>🗄 ${t('cab')}</h2><div class="card"><label>${t('mname')}</label><div class="bar"><input id="p_name" value="${esc(myName())}"><button id="pname" style="flex:0 0 auto">${t('save')}</button></div><p class="mu">${bd(UID)} ${(PR[UID]||{}).pts||0} ⭐</p></div><div class="card"><label>${t('name')}</label><input id="c_name"><label>${t('place')}</label><input id="c_place"><label>${t('note')}</label><input id="c_note"><label>${t('photo')}</label><input id="c_img" type="file" accept="image/*"><br><br><button class="pr" id="cadd">${t('add')}</button></div>`+CB.map(x=>`<div class="card">${x.img?`<img src="${esc(x.img)}" alt="">`:''}<h3 style="margin:0">${esc(x.name)}</h3><p class="mu">📍 ${esc(x.place)} · ${esc((x.created_at||'').slice(0,10))}<br>${esc(x.note)}</p><button data-cd="${x.id}">🗑</button></div>`).join('')}
+ if(V=='tools')return `<h2>📷 ${t('idt')}</h2><div class="card"><input id="ip" type="file" accept="image/*" capture="environment"><br><br><button class="pr" id="ib">${t('idb')}</button><div id="io" style="white-space:pre-wrap;margin-top:10px"></div></div><h2>${t('g1')}</h2><div class="card">${t('g2').map(x=>`<p style="margin:0 0 8px">• ${x}</p>`).join('')}<p class="mu">${t('g3')}</p></div><h2>🛡 ${t('scamT')}</h2><div class="card">${t('scamL').map(x=>`<p style="margin:0 0 8px">• ${x}</p>`).join('')}</div>`;
+ return `<h2>${t('about')}</h2><div class="card"><p>${t('intro')}</p><p class="mu">${t('warn')}</p><button id="ex">${t('exp')}</button></div>`}
+function render(){nav();m.innerHTML=view();scrollTo(0,0)}
+const SBU='https://vztigxtwvrkaulilhedv.supabase.co',SBK='sb_publishable_cxlrdAlmpLpLiUWgfAoT9Q_P433hemd';
+async function api(p,o={}){const h={apikey:SBK,...(S?{Authorization:'Bearer '+S.access_token}:{}),...(o.json?{'Content-Type':'application/json'}:{}),...(o.h||{})};
+ const r=await fetch(SBU+p,{method:o.m||'GET',headers:h,body:o.json?JSON.stringify(o.json):o.body});
+ if(r.status==401&&S&&S.refresh_token&&!o.rt){await refresh();return api(p,{...o,rt:1})}
+ if(!r.ok){let m='';try{const j=await r.json();m=j.message||j.msg||JSON.stringify(j)}catch(e){m=r.status}throw new Error(m)}
+ const x=await r.text();return x?JSON.parse(x):null}
+async function refresh(){try{const r=await fetch(SBU+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:SBK,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:S.refresh_token})});if(!r.ok)throw 0;S=await r.json();UID=S.user.id;ld('sess',S)}catch(e){S=null;UID='';ld('sess',null)}}
+async function doAuth(k){const email=$('#em').value.trim(),password=$('#pw').value;if(!email||password.length<6){toast(t('eml')+' / '+t('pwd'));return}
+ try{const r=await fetch(SBU+'/auth/v1/'+(k=='up'?'signup':'token?grant_type=password'),{method:'POST',headers:{apikey:SBK,'Content-Type':'application/json'},body:JSON.stringify(k=='up'?{email,password,data:{name:($('#nm').value||'').trim()||email.split('@')[0]}}:{email,password})});const j=await r.json();
+ if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'error');
+ if(!j.access_token){toast(t('cfm'));return}
+ S=j;UID=j.user.id;ld('sess',S);V='feed';await load();render()}catch(e){toast('⚠ '+String(e.message).slice(0,90))}}
+const mp=r=>({id:r.id,gid:r.group_id,vf:!!r.verified,rc:r.reports&&r.reports[0]?r.reports[0].count:0,uid:r.uid,kind:r.kind||'sell',name:r.name,st:r.st,sel:r.seller,lic:r.lic,ctry:r.country,city:r.city,vil:r.village,price:r.price,tel:r.tel,d:r.descr,img:r.img,lk:r.likes&&r.likes[0]?r.likes[0].count:0,c:(r.comments||[]).sort((a,b)=>a.created_at<b.created_at?-1:1).map(x=>({id:x.id,body:x.body,uid:x.uid,best:x.best})),own:!!UID&&r.uid==UID,fl:!!(r.reports&&r.reports[0]&&r.reports[0].count>0)});
+async function load0(){try{const r=await api('/rest/v1/posts?select=*,comments(id,body,created_at,uid,best),likes(count),reports(count)&order=id.desc&limit=100');SP=r.map(mp);ld('cache',r)}catch(e){const c=sv('cache',null);if(c)SP=c.map(mp)}}
+let ADM=false,GR=[],GM=[],G=null,PG=null,AD=[],MH=0,ai=0,PR={},LB=[],FW=[],CB=[],QZ=sv('quiz',{}),ST=sv('streak',{last:0,n:0}),SEEN=sv('seen',0);
+async function load(){await load0();
+ try{GR=await api('/rest/v1/groups?select=*,group_members(count)&order=id')}catch(e){}
+ try{AD=await api('/rest/v1/ads?select=*&active=eq.true&order=id.desc&limit=10')}catch(e){}
+ if(S){try{GM=(await api('/rest/v1/group_members?select=group_id')).map(x=>x.group_id)}catch(e){}try{ADM=(await api('/rest/v1/admins?select=uid')).length>0}catch(e){ADM=false}}else{GM=[];ADM=false}
+ try{LB=await api('/rest/v1/leaderboard?select=*&order=pts.desc&limit=1000');PR={};LB.forEach(x=>PR[x.uid]=x)}catch(e){}
+ if(S)try{FW=(await api('/rest/v1/follows?select=term')).map(x=>x.term)}catch(e){}}
+async function loadCab(){if(!S)return;try{CB=await api('/rest/v1/collection?select=*&order=id.desc')}catch(e){}}
+const bd=u=>{const p=(PR[u]||{}).pts||0;return p>=25?'🥇':p>=10?'🥈':p>=3?'🥉':''},nm=u=>((PR[u]||{}).name||'?')+' '+bd(u),myName=()=>(PR[UID]||{}).name||'Mtumiaji';
+const hs=x=>[...x].reduce((a,c)=>(a*31+c.charCodeAt(0))%9973,0);
+function qz(){const k=Math.floor(Date.now()/864e5),n=MIN.length,i=(k*7)%n,a=MIN[i],o=[a];let j=i;for(let c=0;o.length<4&&c<80;c++){j=(j*13+5+k+c)%n;if(!o.includes(MIN[j]))o.push(MIN[j])}
+ return{a,k,o:o.sort((x,y)=>hs(x[0]+k)-hs(y[0]+k))}}
+const fwBox=()=>{const n=SP.filter(p=>p.id>SEEN&&!p.own&&FW.some(w=>(p.name+' '+p.d+' '+p.ctry).toLowerCase().includes(w)));
+ return(FW.length?`<div>${FW.map(w=>`<button class="tag" data-uf="${esc(w)}">🔔 ${esc(w)} ✕</button>`).join('')}</div>`:'')+(n.length?`<div class="card">🔔 ${n.length} ${t('fwn')} <button id="fwok">${t('ok')}</button></div>`:'')};
+async function cadd(){if(!S){V='login';render();return}const n=$('#c_name').value.trim();if(!n){toast(t('name'));return}
+ try{let img=null;const f=$('#c_img').files[0];if(f)img=await upImg(URL.createObjectURL(await small(f)));
+ await api('/rest/v1/collection',{m:'POST',json:{name:n,place:$('#c_place').value.trim(),note:$('#c_note').value.trim(),img}});toast(t('saved'));await loadCab();render()}catch(e){toast('⚠ '+String(e.message).slice(0,90))}}
+function xh(b){const d=b.dataset,rl=p=>p.then(()=>load()).then(()=>{const y=scrollY;render();scrollTo(0,y)}).catch(e=>toast('⚠ '+String(e.message).slice(0,90)));
+ if(d.mh){MH=+d.mh;const y=scrollY;render();scrollTo(0,y);return 1}
+ if(d.go){G=+d.go;V='group';render();return 1}
+ if(d.gb){V='groups';render();return 1}
+ if(d.gp){PG=G;V='post';render();return 1}
+ if(d.gj){if(!S){V='login';render();return 1}rl(api('/rest/v1/group_members',{m:'POST',json:{group_id:+d.gj},h:{Prefer:'resolution=ignore-duplicates'}}));return 1}
+ if(d.gl){rl(api('/rest/v1/group_members?group_id=eq.'+d.gl,{m:'DELETE'}));return 1}
+ if(d.qa){const q=qz(),ok=d.qa==q.a[0];QZ={day:q.k,ok,pick:d.qa};ld('quiz',QZ);if(ok){ST={last:q.k,n:ST.last==q.k-1?ST.n+1:(ST.last==q.k?ST.n:1)};ld('streak',ST)}render();return 1}
+ if(d.uf){rl(api('/rest/v1/follows?term=eq.'+encodeURIComponent(d.uf),{m:'DELETE'}));return 1}
+ if(d.cd){api('/rest/v1/collection?id=eq.'+d.cd,{m:'DELETE'}).then(loadCab).then(render);return 1}
+ if(b.id=='fw'){if(!S){V='login';render();return 1}const w=Q.trim().toLowerCase();if(!w){toast(t('search'));return 1}rl(api('/rest/v1/follows',{m:'POST',json:{term:w},h:{Prefer:'resolution=ignore-duplicates'}}));return 1}
+ if(b.id=='fwok'){SEEN=Math.max(0,...SP.map(p=>p.id));ld('seen',SEEN);render();return 1}
+ if(b.id=='cadd'){cadd();return 1}
+ if(b.id=='pname'){rl(api('/rest/v1/profiles?uid=eq.'+UID,{m:'PATCH',json:{name:$('#p_name').value.trim()||'Mtumiaji'}}));return 1}
+ return 0}
+const MOHS=[[1,'Talc','Kucha huchana kwa urahisi',"L'ongle raye facilement"],[2,'Gypse','Kucha huchana kwa shida',"L'ongle raye"],[3,'Calcite','Sarafu ya shaba huchana','Une pièce de cuivre raye'],[4,'Fluorite','Kisu huchana kwa urahisi','Le couteau raye facilement'],[5,'Apatite','Kisu huchana kwa shida','Le couteau raye difficilement'],[6,'Feldspath','Tupa ya chuma huchana; haichani kioo','La lime raye; ne raye pas le verre'],[7,'Quartz','Huchana kioo','Raye le verre'],[8,'Topaze','Huchana quartz','Raye le quartz'],[9,'Corindon','Rubis na saphir; huchana topaze','Rubis et saphir; raye la topaze'],[10,'Diamant','Ngumu zaidi; huchana kila kitu','Le plus dur; raye tout']];
+const mohs=()=>`<div class="card"><h3 style="margin:0 0 8px">${t('mohs')}</h3><div class="row" style="gap:4px">${MOHS.map(x=>`<button data-mh="${x[0]}" class="${MH==x[0]?'pr':''}" style="min-width:40px;flex:1">${x[0]}</button>`).join('')}</div>${MH?`<p style="margin:10px 0 0"><b>${MOHS[MH-1][1]}</b> — ${MOHS[MH-1][L=='sw'?2:3]}</p>`:`<p class="mu">${t('mohsh')}</p>`}</div>`;
+const posts=()=>SH?SP:P;
+async function shw(p,a,c,b){if(!S){V='login';render();return}
+ try{if(a=='lk')await api('/rest/v1/likes',{m:'POST',json:{post_id:p.id},h:{Prefer:'resolution=ignore-duplicates'}});
+ else if(a=='rp')await api('/rest/v1/reports',{m:'POST',json:{post_id:p.id},h:{Prefer:'resolution=ignore-duplicates'}});
+ else if(a=='dl')await api('/rest/v1/posts?id=eq.'+p.id,{m:'DELETE'});
+ else if(a=='vf')await api('/rest/v1/rpc/set_verified',{m:'POST',json:{pid:p.id,v:!p.vf}});
+ else if(a=='bs')await api('/rest/v1/comments?id=eq.'+b.dataset.cid,{m:'PATCH',json:{best:true}});
+ else if(a=='cm'){const i=c.querySelector('input');if(!i.value.trim())return;await api('/rest/v1/comments',{m:'POST',json:{post_id:p.id,body:i.value.trim()}})}
+ else return;const y=scrollY;await load();render();scrollTo(0,y)}catch(e){toast('⚠ '+String(e.message).slice(0,90))}}
+function sub(){const g=i=>$('#f_'+i).value.trim(),s=g('sel'),c=g('ctry');const kd=$('#f_kind').value;if(kd=='sell'&&(!s||!c)){toast('* '+t('seller')+' / '+t('country'));return}
+ const p={id:Date.now(),name:g('name'),st:kd=='sell'?+$('#f_st').value:4,kind:kd,gid:$('#f_grp').value||null,sel:s||myName(),lic:g('lic'),ctry:c,city:g('city'),vil:g('vil'),price:g('price'),tel:g('tel'),d:g('d'),own:1,lk:0,c:[],img:''};
+ const f=$('#f_img').files[0],done=async()=>{
+   if(!S){V='login';render();return}
+   const payload={name:p.name,st:p.st,seller:p.sel,lic:p.lic,country:p.ctry,city:p.city,village:p.vil,price:p.price,tel:p.tel,descr:p.d,kind:p.kind,group_id:p.gid?+p.gid:null,img:null},pending=p.img||'';
+   const qu=()=>{const q=sv('offline_queue',[]);q.push({payload,pending});ld('offline_queue',q);toast('Imehifadhiwa! Itatumwa mtandao ukirudi.');V='feed';render()};
+   if(!navigator.onLine)return qu();
+   try{if(pending)payload.img=await upImg(pending);await api('/rest/v1/posts',{m:'POST',json:payload});toast(t('saved'));V='feed';await load();render()}catch(e){qu()}
+  };
+ if(!f)return done();const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,900/im.width),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);p.img=cv.toDataURL('image/jpeg',.7);done()};im.src=r.result};r.readAsDataURL(f)}
+m.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(xh(b))return;if(b.id=='li'||b.id=='su')return doAuth(b.id=='su'?'up':'in');if(b.id=='sub')return sub();if(b.id=='ib')return ident();if(b.id=='lo'){LO=!LO;return render()}
+ if(b.id=='ex'){const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(P));a.download='madini.json';a.click();return}
+ const c=b.closest('.card[data-id]');if(!c)return;const p=posts().find(x=>x.id==c.dataset.id),a=b.dataset.a;if(!p)return;
+ if(a=='wa'){open('https://wa.me/'+p.tel.replace(/\D/g,'')+'?text='+encodeURIComponent((p.name||'?')+' - '+p.ctry),'_blank');return}
+ if(a=='sh'){const tx=(p.name||'?')+' | '+p.sel+' | '+[p.city,p.ctry].filter(Boolean).join(', ')+(p.price?' | '+p.price:'');try{navigator.share?navigator.share({text:tx}):navigator.clipboard.writeText(tx).then(()=>toast(t('copied')))}catch(x){}return}
+ if(SH&&a!='fv'){shw(p,a,c,b);return}
+ if(a=='lk')p.lk=(p.lk||0)+1;
+ if(a=='fv')F=F.includes(p.id)?F.filter(x=>x!=p.id):[...F,p.id];
+ if(a=='rp')p.fl=1;
+ if(a=='dl')P=P.filter(x=>x!=p.id);
+ if(a=='cm'){const i=c.querySelector('input');if(!i.value.trim())return;(p.c=p.c||[]).push(i.value.trim())}
+ ld('posts',P);ld('favs',F);const y=scrollY;render();scrollTo(0,y)});
+m.addEventListener('change',e=>{if(e.target.id=='fs'){FS=+e.target.value;render()}if(e.target.id=='f_kind')$('#so').style.display=e.target.value=='sell'?'':'none'});
+m.addEventListener('input',e=>{if(e.target.id=='q'){Q=e.target.value;const p=e.target.selectionStart;m.innerHTML=view();const q=$('#q');q.focus();q.setSelectionRange(p,p)}});
+render();
+load().then(()=>{syncOfflineQueue();if(!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))render()});setInterval(()=>{if(document.visibilityState=='visible'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&(V=='feed'||V=='fav'||V=='mine')){const y=scrollY;load().then(()=>{render();scrollTo(0,y)})}},30000);
+if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
+
